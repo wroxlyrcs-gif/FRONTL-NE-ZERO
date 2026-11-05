@@ -1,124 +1,283 @@
-<!DOCTYPE html><html lang="tr"><head><meta charset="utf-8"><title>FRONTLINE: ZERO</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"><meta name="mobile-web-app-capable" content="yes">
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>FRONTLINE: ZERO</title>
 <style>
-:root{color-scheme:dark;--b:#2f8fff;--r:#ff3030}
-*{box-sizing:border-box;margin:0}
-html,body{height:100%;overflow:hidden;background:#07090d;color:#fff;font:600 14px/1.35 system-ui,"Segoe UI",sans-serif;user-select:none}
-canvas{position:fixed;inset:0;width:100%;height:100%}
-.ov{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
-#menu{display:flex;background:linear-gradient(90deg,#0a2a6a77,#0000 38%,#0000 62%,#6a0a0a77)}
-h1{font-size:min(10vw,76px);letter-spacing:.14em;margin-bottom:12px}h1 b{color:var(--b)}h1 i{color:var(--r);font-style:normal}
-.pn{display:flex;flex-direction:column;gap:8px;align-items:center;max-width:92vw}
-.bt,select,input[type=range]{width:270px}
-.bt{padding:11px;background:#ffffff0d;border:1px solid #fff3;color:#fff;font:inherit;letter-spacing:.2em;cursor:pointer;transition:.18s}
-.bt:hover{background:#ffffff22;transform:translateX(6px);border-color:var(--b)}.bt:nth-child(even):hover{border-color:var(--r);transform:translateX(-6px)}
-select{padding:8px;background:#111;color:#fff;border:1px solid #fff3}
-label{display:flex;justify-content:space-between;gap:12px;width:270px;font-size:12px;opacity:.9}
-.p{max-width:420px;opacity:.8;font-weight:500}
-#hud{position:fixed;inset:0;display:none;pointer-events:none}
-#top{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);display:flex;gap:18px;align-items:center;background:#0008;padding:6px 18px;border-radius:6px}
-#top b{font-size:30px}#sb{color:var(--b)}#sr{color:var(--r)}#tm{font-size:18px;text-align:center}#top small{display:block;text-align:center;opacity:.6;font-size:10px}
-#hp{position:absolute;left:20px;bottom:20px;width:230px;background:#0008;padding:8px;border-left:4px solid var(--b)}
-#hpb{height:8px;background:#fff;width:100%;transition:width .15s}#hpt{font-size:26px}
-#wp{position:absolute;right:20px;bottom:20px;text-align:right;background:#0008;padding:8px 12px}#am{font-size:28px}#wi{height:34px;display:block;margin-left:auto}
-#hm{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:26px;opacity:0;transition:opacity .15s}
-#feed{position:absolute;right:16px;top:70px;text-align:right}#feed div{background:#0008;padding:3px 8px;margin-bottom:3px}
-#msg{position:absolute;top:28%;width:100%;text-align:center;font-size:30px;letter-spacing:.1em;text-shadow:0 2px 8px #000}
-#vg{position:absolute;inset:0;box-shadow:inset 0 0 120px 30px #f00;opacity:0}
-table{border-collapse:collapse;min-width:min(520px,92vw)}td,th{padding:3px 10px;text-align:right}td:first-child,th:first-child{text-align:left}
-.B{color:#6db4ff}.R{color:#ff7070}
-#res{background:#000b}#rt{font-size:min(9vw,56px);letter-spacing:.1em}
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#080d13;color:white;font-family:Arial,sans-serif}
+canvas{display:block}
+.screen{position:fixed;inset:0;background:#080d13ee;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:5}
+h1{font-size:48px;letter-spacing:5px;margin:0;text-align:center}
+h1 span{color:#ff3434}
+button{background:#182738;color:white;border:1px solid #4389c9;padding:13px 25px;width:260px;font-size:15px;font-weight:bold;letter-spacing:2px;border-radius:5px}
+button:active{background:#2875ae}
+.hidden{display:none!important}
+#hud{position:fixed;inset:0;pointer-events:none;display:none}
+#score{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#000a;padding:10px 20px;font-size:20px}
+#health{position:absolute;bottom:20px;left:15px;background:#000a;padding:12px}
+#ammo{position:absolute;bottom:20px;right:15px;background:#000a;padding:12px}
+#cross{position:absolute;top:50%;left:50%;font-size:25px;transform:translate(-50%,-50%)}
+#controls{position:fixed;inset:0;display:none;pointer-events:none}
+.control{position:absolute;pointer-events:auto;border:2px solid #ffffff88;background:#0008;color:white;border-radius:50%;width:65px;height:65px;font-size:20px;touch-action:none}
+#fire{right:30px;bottom:90px}
+#jump{right:110px;bottom:25px}
+#reload{right:30px;bottom:20px}
+#stick{position:absolute;left:25px;bottom:35px;width:115px;height:115px;border:2px solid #ffffff77;border-radius:50%;pointer-events:auto;touch-action:none}
+#knob{position:absolute;left:35px;top:35px;width:42px;height:42px;border-radius:50%;background:#ffffff99}
+#look{position:absolute;right:0;top:0;width:65%;height:100%;pointer-events:auto;touch-action:none}
+#pause{position:absolute;top:12px;right:12px;width:48px;padding:10px;pointer-events:auto}
+.small{font-size:12px;color:#aaa}
+</style>
+</head>
+<body>
 
-@keyframes in{from{letter-spacing:.6em;opacity:0;filter:blur(8px)}to{opacity:1;filter:none}}
-#menu{flex-direction:row;gap:5vw;background:linear-gradient(90deg,#000,#1a1a1ecc 45%,#5a0a0a66)}
-h1{font-size:min(10vh,8vw,70px);text-align:left;line-height:1.05;letter-spacing:.1em;background:linear-gradient(#fff,#777);-webkit-background-clip:text;background-clip:text;color:transparent;animation:in 2s ease-out}h1 i{-webkit-text-fill-color:var(--r)}
-#pw{max-height:92vh;overflow:auto}.bt{padding:min(11px,1.8vh);width:min(270px,60vw)}
-#sset label{flex-wrap:wrap;width:min(430px,88vw)}#sset input[type=range],#sset select{width:48%}#sset h3{margin-top:8px;align-self:flex-start}#sset a{cursor:pointer;opacity:.7}
-#fps{position:fixed;left:6px;top:calc(4px + env(safe-area-inset-top,0px));font-size:11px;opacity:.8;z-index:5;pointer-events:none}
-#tc{position:fixed;inset:0;display:none;pointer-events:none;touch-action:none}
-#tc>*{pointer-events:auto;touch-action:none;opacity:var(--op,.6)}
-#lk{position:absolute;right:0;top:0;width:62%;height:100%;opacity:0!important}
-#js{position:absolute;left:calc(5vw + env(safe-area-inset-left,0px));bottom:9vh;width:calc(var(--js,1)*30vh);height:calc(var(--js,1)*30vh);border-radius:50%;background:#fff3;border:2px solid #fff8}
-#jk{position:absolute;left:50%;top:50%;width:40%;height:40%;margin:-20%;border-radius:50%;background:#fffa;pointer-events:none}
-.tb{position:absolute;width:calc(var(--bs,1)*13vh);height:calc(var(--bs,1)*13vh);border-radius:50%;border:2px solid #fff9;background:#0007;color:#fff;font-size:5vh}
-body.t #hp{left:12vw;bottom:auto;top:3vh;width:170px}body.t #wp{bottom:auto;top:3vh;right:12vw}body.t #feed{top:14vh;right:12vw}
-#rot{position:fixed;inset:0;background:#000;display:none;z-index:99;align-items:center;justify-content:center;text-align:center;font-size:20px;padding:20px}
-@media (orientation:portrait) and (pointer:coarse){#rot{display:flex}}
+<div id="menu" class="screen">
+<h1>FRONTLINE:<br><span>ZERO</span></h1>
+<p>3D TACTICAL ARENA</p>
+<button onclick="startGame('tdm')">TEAM DEATHMATCH</button>
+<button onclick="startGame('elim')">ELIMINATION</button>
+<button onclick="training()">ANTRENMAN</button>
+<p class="small">V1 • ANDROID / WEB</p>
+</div>
 
-#xh{position:absolute;left:50%;top:50%;width:0;height:0}#xh b{position:absolute;display:none;box-shadow:0 0 0 1px #0007}#xh .xr{background:none!important;box-shadow:none;border-radius:50%}
-#m5{max-width:min(720px,94vw)}#mk .tabs{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}.tb2{width:auto!important;padding:5px 9px!important;letter-spacing:0!important;font-size:12px}.tb2.on{border-color:var(--b);background:#2f8fff33}
-.cbal{font-size:20px;margin:6px}#mkc{display:flex;flex-wrap:wrap;justify-content:center;max-height:50vh;overflow:auto;gap:6px}.cd{width:158px;border:1px solid #fff3;padding:6px;display:flex;flex-direction:column;gap:3px;background:#ffffff0a}.cd img{height:30px;object-fit:contain;object-position:left}.cd small{opacity:.75;font-weight:500}.cd .bt{width:100%;padding:6px;letter-spacing:.05em;font-size:12px}.cd .bt[disabled]{opacity:.5}
-.sw{height:26px;border:1px solid #fff4}.row{width:100%;text-align:left;display:flex;flex-wrap:wrap;gap:4px;align-items:center}.sm{width:auto!important;padding:5px 9px!important;font-size:12px;letter-spacing:0!important}.sm[disabled]{opacity:.5}.prof{text-align:left;line-height:1.8}
-#ts{position:fixed;left:50%;bottom:6vh;transform:translateX(-50%);background:#000d;padding:8px 16px;border:1px solid #fff4;z-index:60;display:none}#cb{position:fixed;right:14px;top:calc(10px + env(safe-area-inset-top,0px));z-index:5;font-size:18px}
-#res{overflow:auto;justify-content:flex-start;padding:2vh 3vw}#rw{line-height:1.6;margin:6px}
-@media (max-height:480px){.bt{padding:5px}#cb{font-size:14px}}
+<div id="hud">
+<div id="score">MAVİ 0 - 0 KIRMIZI | <span id="timer">08:00</span></div>
+<div id="health">CAN: <span id="hp">100</span></div>
+<div id="ammo">MERMİ: <span id="bullets">30</span>/30</div>
+<div id="cross">+</div>
+<button id="pause" onclick="pauseGame()">Ⅱ</button>
+</div>
 
-body{-webkit-touch-callout:none;overscroll-behavior:none}
-#js{pointer-events:none!important}#jz{position:absolute;left:0;top:0;width:45%;height:100%;opacity:0!important}
-.tb.pr{background:#fff5}.tb.on{border-color:var(--b);background:#2f8fff66}
-#ce{position:fixed;left:50%;bottom:2vh;transform:translateX(-50%);display:none;z-index:40;background:#000d;padding:8px 12px;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;max-width:96vw;border:1px solid #fff4}body.edit #ce{display:flex}#ce label{width:auto;gap:6px;align-items:center}#ce input[type=range]{width:110px}
-body.edit .tb,body.edit #js{outline:2px dashed #fff8;pointer-events:auto!important;cursor:move}body.edit .sel{outline-color:#2f8fff!important;outline-style:solid}body.edit #lk,body.edit #jz{display:none}
+<div id="controls">
+<div id="look"></div>
+<div id="stick"><div id="knob"></div></div>
+<button class="control" id="fire">●</button>
+<button class="control" id="jump">▲</button>
+<button class="control" id="reload">↻</button>
+</div>
 
-.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.chip{padding:8px 14px;border:1px solid #fff3;background:#ffffff0d;cursor:pointer}.chip.on{border-color:var(--b);background:#2f8fff44}.chip:nth-child(even).on{border-color:var(--r);background:#ff303033}
-.mapr{display:flex;gap:8px;overflow-x:auto;padding:4px;max-width:94vw}.mc{flex:0 0 156px;border:2px solid #fff2;background:#0009;cursor:pointer;text-align:left}.mc.on{border-color:var(--b);box-shadow:0 0 12px #2f8fff88}.mc img{width:100%;display:block}.mc b,.mc small{display:block;padding:2px 6px;font-size:12px}.mc small{opacity:.7;font-weight:500;min-height:30px}
-#ps h3{margin:8px 0 4px;letter-spacing:.2em;font-size:13px;opacity:.8}#psw{width:100%;max-height:84vh;overflow:auto;text-align:center}#pbt{display:flex;gap:12px;margin-top:8px}
-#mi{position:absolute;top:calc(58px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:#0008;padding:2px 12px;font-size:12px;white-space:nowrap;display:none}
-</style></head><body>
-<canvas id="c"></canvas>
-<div id="hud"><div id="top"><b id="sb">0</b><div><div id="tm"></div><small>VS</small></div><b id="sr">0</b></div>
-<div id="mi"></div><div id="hp"><span id="hpt">100</span><div id="hpb"></div></div>
-<div id="wp"><img id="wi"><div id="wn"></div><div id="am"></div></div>
-<div id="xh"><b></b><b></b><b></b><b></b><b class="xd" style="border-radius:50%"></b><b class="xr"></b></div><div id="hm">✕</div><div id="feed"></div><div id="msg"></div><div id="vg"></div></div>
-<div id="fps"></div><div id="tc"><div id="lk"></div><div id="jz"></div><div id="js"><i id="jk"></i></div><button class="tb" id="tF">●</button><button class="tb" id="tF2">●</button><button class="tb" id="tA">◎</button><button class="tb" id="tJ">▲</button><button class="tb" id="tC">▼</button><button class="tb" id="tR">⟳</button><button class="tb" id="tW">⇄</button><button class="tb" id="tP">❚❚</button></div><div id="ce"><b id="cen"></b><small data-i="cehint"></small><label><span data-i="cesz"></span><input id="ces" type="range" min="6" max="34" step="1"></label><label><span data-i="ceop"></span><input id="ceo" type="range" min=".2" max="1" step=".05"></label><label><span data-i="lay"></span><select id="cl"><option value="0">1</option><option value="1">2</option><option value="2">3</option></select></label><button class="bt sm" id="cld" data-i="cld"></button><button class="bt sm" id="csv" data-i="csv"></button><button class="bt sm" id="crs" data-i="crs"></button><button class="bt sm" id="cok" data-i="cok"></button></div><div id="sbd" class="ov" style="background:#000a"></div>
-<div id="pause" class="ov" style="background:#000a;pointer-events:auto"><h2 data-i="paused"></h2><button class="bt" id="rs" data-i="resume"></button><button class="bt" id="qm" data-i="menu"></button></div>
-<div id="res" class="ov"><div id="rt"></div><div id="rs2"></div><div id="rtab"></div><button class="bt" id="rn" data-i="next"></button><button class="bt" id="rm" data-i="menu"></button></div>
-<div id="menu" class="ov"><div><h1>FRONTLINE<br><i>ZERO</i></h1><p class="p" data-i="help" style="text-align:left"></p></div><div id="pw">
-<div class="pn" id="m0"><button class="bt" id="bPlay" data-i="play"></button><button class="bt" id="bPr" data-i="pr"></button><button class="bt" id="bMk" data-i="mk"></button><button class="bt" id="bMp" data-i="mp"></button><button class="bt" id="bSet" data-i="set"></button><button class="bt" id="bCu" data-i="cu"></button><button class="bt" id="bLg" data-i="lg"></button><button class="bt" id="bQ" data-i="q"></button>
-<label><span data-i="diff"></span><select id="df"><option value="0" data-i="e1"></option><option value="1" data-i="e2" selected></option><option value="2" data-i="e3"></option></select></label></div>
-<div class="pn" id="m1" style="display:none"><button class="bt" id="bTdm" data-i="tdm"></button><button class="bt" id="bEl" data-i="el"></button><button class="bt" data-back data-i="back"></button></div>
-<div class="pn" id="m2" style="display:none"><div id="sset"></div></div>
-<div class="pn" id="m3" style="display:none"><label><span data-i="ac"></span><select id="ac"><option value="3381759" data-i="blue"></option><option value="16727600" data-i="red"></option><option value="16777215" data-i="white"></option><option value="65416" data-i="green"></option></select></label><p class="p" data-i="cos"></p><button class="bt" data-back data-i="back"></button></div>
-<div class="pn" id="m5" style="display:none"><div id="mk"></div></div><div class="pn" id="m4" style="display:none"><p class="p" id="mt"></p><button class="bt" data-back data-i="back"></button></div></div></div>
-<div id="ps" class="ov" style="background:rgba(8,9,12,.8);z-index:30;justify-content:flex-start;padding:2vh 2vw"><div id="psw"><h3 data-i="pt"></h3><div id="ptm" class="chips"></div><h3 data-i="pm"></h3><div id="pmp" class="mapr"></div><h3 data-i="pg"></h3><div id="pmd" class="chips"></div><p id="pds" class="p" style="margin:6px auto"></p></div><div id="pbt"><button class="bt sm" id="pbk" data-i="back"></button><button class="bt sm" id="pgo" data-i="start" style="border-color:var(--r)"></button></div></div><div id="lg" class="ov" style="background:#000e;z-index:50"><h2>LANGUAGE / DİL</h2><button class="bt" id="lgT">TÜRKÇE</button><button class="bt" id="lgE">ENGLISH</button></div>
-<div id="rot" data-i="rot"></div><div id="ts"></div><div id="cb"></div><div id="cf" class="ov" style="background:#000c;z-index:70"><p id="cft" style="font-size:20px"></p><div style="display:flex;gap:10px"><button class="bt" id="cfy" data-i="yes"></button><button class="bt" id="cfn" data-i="no"></button></div></div>
-<div id="err" style="position:fixed;z-index:200;left:0;right:0;top:0;background:#900;color:#fff;padding:8px;font:12px monospace;display:none;white-space:pre-wrap"></div>
-<script>function showErr(m){var e=document.getElementById('err');e.style.display='block';e.textContent+=m+'\n'}addEventListener('error',function(ev){showErr((ev.message||'error')+' (satır '+(ev.lineno||'?')+')'+(ev.error&&ev.error.stack?'\n'+ev.error.stack.split('\n').slice(0,3).join('\n'):''))});addEventListener('unhandledrejection',function(ev){ev.preventDefault();var r=ev.reason;if(/lock|fullscreen|orientation|NotAllowed|Abort/i.test(String(r&&r.name||'')+String(r&&r.message||r)))return;showErr('promise: '+(r&&r.stack||r))})</script>
-<script src="three.min.js" onerror="showErr('three.min.js bulunamadı: README adım 2 / three.min.js missing: see README step 2')"></script>
+<div id="pauseScreen" class="screen hidden">
+<h1>OYUN DURAKLATILDI</h1>
+<button onclick="resumeGame()">DEVAM ET</button>
+<button onclick="backMenu()">ANA MENÜ</button>
+</div>
+
+<div id="result" class="screen hidden">
+<h1 id="resultTitle">MAÇ BİTTİ</h1>
+<p id="resultText"></p>
+<button onclick="backMenu()">ANA MENÜ</button>
+<button onclick="startGame(mode)">TEKRAR OYNA</button>
+</div>
+
+<script src="three.min.js"></script>
 <script>
-const $=i=>document.getElementById(i),R=Math.random,PI=Math.PI,V3=(x=0,y=0,z=0)=>new THREE.Vector3(x,y,z);
-const DEF={mode:'tdm',tsens:100,jfl:1,f2:1,lay:[null,null,null],cl:{js:[14,70,30],tF:[90,62,17],tF2:[8,36,11],tA:[80,40,11],tJ:[77,82,12],tC:[91,85,11],tR:[64,84,11],tW:[94,26,10],tP:[5,9,8]},coins:0,earned:0,spent:0,own:[0,1,2,3,4],skins:[0],skin:0,lo:[0,1,2,3,4],st:{m:0,w:0,k:0,d:0},daily:'',wb:0,map:0,tod:0,xst:2,xcl:'#ffffff',xsz:8,xth:2,xgp:4,xdy:1,sens:100,ads:100,vert:100,fov:90,inv:0,vm:80,vmu:50,vs:80,gfx:2,sd:1,rs:.85,vd:120,fx:1,fps:60,showfps:1,bright:100,contrast:100,hit:1,dmgi:1,feed:1,autor:1,vib:1,jsz:1,bsz:1,bop:.6,lang:''};
-let FIRST=1;const S=Object.assign({},DEF,(()=>{try{let v=localStorage.getItem('flz');if(v){FIRST=0;return JSON.parse(v)}}catch(e){}return{}})());
-function save(){try{localStorage.setItem('flz',JSON.stringify(S))}catch(e){}}
-const D={tr:{play:'OYNA',pr:'ANTRENMAN',mp:'ÇOK OYUNCULU',set:'AYARLAR',cu:'ÖZELLEŞTİR',lg:'DİL',q:'ÇIKIŞ',tdm:'TAKIM ÖLÜM MAÇI (50 skor / 8 dk)',el:'ELEME (5 tur)',back:'GERİ',diff:'Bot zorluğu',e1:'Kolay',e2:'Normal',e3:'Zor',
-help:'Dokunmatik: sol joystick hareket, sağ ekran bakış, ● ateş, ◎ nişan, ▲ zıpla, ▼ eğil, ⟳ şarjör, ⇄ silah. Klavye: WASD, Shift, C, Space, R, 1-5, Tab.',
-mpt:'Çevrim içi çok oyunculu bu sürümde YOK: oda, eşleştirme ve senkronizasyon gerçek bir sunucu ister, bu sayfa dış ağ bağlantısına izin vermiyor. Bu yüzden ping/paket kaybı da gösterilmiyor. Botlu modlar çalışır.',qt:'Web sayfası kendini kapatamaz — sekmeyi veya uygulamayı kapatın.',
-xc:'Nişangâh rengi',xs:'Nişangâh stili',dot:'Nokta',sq:'Kare',ac:'Silah aksesuar rengi',blue:'Mavi',red:'Kırmızı',white:'Beyaz',green:'Yeşil',cos:'Yalnızca kozmetik, oynanışa etkisi yok.',
-rall:'TÜM AYARLARI SIFIRLA',go:'BAŞLA!',dead:'ELENDİN',dead5:'ELENDİN — 5 sn sonra yeniden doğarsın',kill:'ELEME: ',rw:'%1 TAKIM TURU KAZANDI',wins:'%1 TAKIM KAZANDI',tn0:'MAVİ',tn1:'KIRMIZI',victory:'ZAFER',defeat:'YENİLGİ',draw:'BERABERE',board:'SKOR TABLOSU',
-pl:'Oyuncu',k:'Elm',a:'Asist',d:'Ölüm',acc:'İsabet',paused:'DURAKLATILDI',resume:'DEVAM',menu:'ANA MENÜ',rel:'ŞARJÖR',rot:'Telefonu yatay çevirin',net:'Ağ: çevrimdışı'},
-en:{play:'PLAY',pr:'TRAINING',mp:'MULTIPLAYER',set:'SETTINGS',cu:'CUSTOMIZE',lg:'LANGUAGE',q:'EXIT',tdm:'TEAM DEATHMATCH (50 score / 8 min)',el:'ELIMINATION (5 rounds)',back:'BACK',diff:'Bot difficulty',e1:'Easy',e2:'Normal',e3:'Hard',
-help:'Touch: left joystick move, right screen look, ● fire, ◎ aim, ▲ jump, ▼ crouch, ⟳ reload, ⇄ weapon. Keyboard: WASD, Shift, C, Space, R, 1-5, Tab.',
-mpt:'Online multiplayer is NOT in this build: rooms, matchmaking and sync need a real server, and this page cannot make outside network connections. That is why no ping/packet loss is shown. Bot modes work.',qt:'A web page cannot close itself — close the tab or app.',
-xc:'Crosshair color',xs:'Crosshair style',dot:'Dot',sq:'Square',ac:'Weapon accent color',blue:'Blue',red:'Red',white:'White',green:'Green',cos:'Cosmetic only, no gameplay effect.',
-rall:'RESET ALL SETTINGS',go:'GO!',dead:'YOU DIED',dead5:'YOU DIED — respawn in 5 s',kill:'KILL: ',rw:'%1 TEAM WINS THE ROUND',wins:'%1 TEAM WINS',tn0:'BLUE',tn1:'RED',victory:'VICTORY',defeat:'DEFEAT',draw:'DRAW',board:'SCOREBOARD',
-pl:'Player',k:'Kills',a:'Assists',d:'Deaths',acc:'Accuracy',paused:'PAUSED',resume:'RESUME',menu:'MAIN MENU',rel:'RELOAD',rot:'Rotate your device to landscape',net:'Net: offline'}};
-function L(k,a){let s=(D[S.lang]||D.en)[k]||k;return a!==undefined?s.replace('%1',a):s}
-// ---------- AUDIO ----------
-let AC,mg,mu,sf,nb,mi=0;
-function setVol(){if(!AC)return;mg.gain.value=S.vm/100;mu.gain.value=S.vmu/100*.35;sf.gain.value=S.vs/100}
-function initA(){try{initA2()}catch(e){AC=0;showErr('audio: '+e.message)}}
-function initA2(){if(AC)return;AC=new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();mg=AC.createGain();mg.connect(AC.destination);mu=AC.createGain();sf=AC.createGain();mu.connect(mg);sf.connect(mg);setVol();
-nb=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);let d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=R()*2-1;
-let s=AC.createBufferSource();s.buffer=nb;s.loop=true;let f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=180;let g=AC.createGain();g.gain.value=.1;s.connect(f);f.connect(g);g.connect(sf);s.start();setInterval(music,600)}
-function tone(f,t,d,ty,v,dest,f2){let n=AC.currentTime+t,o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,n);if(f2)o.frequency.exponentialRampToValueAtTime(f2,n+d);g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(dest||sf);o.start(n);o.stop(n+d+.05)}
-function nz(t,d,v,fr,dest){let n=AC.currentTime+t,s=AC.createBufferSource();s.buffer=nb;let f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=fr;let g=AC.createGain();g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);s.connect(f);f.connect(g);g.connect(dest||sf);s.start(n,R()*.5,d+.05)}
-function music(){if(!AC||G.state!='menu')return;tone([220,262,330,392,330,262,196,247][mi++%8],0,1.2,'triangle',.3,mu);if(mi%8==1)tone(55,0,4.5,'sawtooth',.1,mu)}
-const FS=[[3000,.12,.5],[4000,.08,.35],[1500,.3,.8],[1200,.45,.9],[2500,.12,.45]];
-function snd(n,v=1){if(!AC||v<.03)return;
-if(/^s\d$/.test(n)){let f=FS[+n[1]];nz(0,f[1],f[2]*v,f[0]);tone(130,0,f[1],'sine',.5*v,0,40)}
-else if(n=='rel1'){nz(0,.05,.3*v,3000);tone(300,.0,.05,'square',.1*v)}else if(n=='rel2'){nz(0,.06,.35*v,4000);tone(200,0,.08,'square',.12*v)}
-else if(n=='step')nz(0,.07,.25*v,500);else if(n=='jump')tone(180,0,.15,'sine',.2,0,300);else if(n=='land')nz(0,.1,.35,300);
-else if(n=='hit')tone(1400,0,.05,'square',.15);else if(n=='kill'){tone(700,0,.1,'square',.15);tone(1000,.08,.15,'square',.15)}
-else if(n=='dmg')tone(90,0,.15,'sawtooth',.25);else if(n=='empty')tone(900,0,.03,'square',.08);
-else if(n=='start'){tone(440,0,.2,'sine',.25);tone(660,.2,.3,'sine',.25)}else if(n=='win')[523,659,784,1047].forEach((f,i)=>tone(f,i*.18,.5,'triangle',.25));else if(n=='lose')[392,330,262,196].forEach((f,i)=>tone(f,i*.25,.6,'sawtooth',.15))}
-// ---------- SCENE ----------
-const ren=new THREE.WebGLRenderer({canvas:$('c'),antialias:true}),sc=new THREE.Scen
+let scene,camera,renderer,player;
+let bots=[],keys={},bullets=30,hp=100;
+let blue=0,red=0,time=480;
+let running=false,paused=false,mode='tdm';
+let moveX=0,moveY=0,lookX=0,lookY=0;
+let yaw=0,pitch=0,reloading=false;
+let clock=new THREE.Clock();
+
+function startGame(m){
+ mode=m;
+ document.querySelectorAll('.screen').forEach(x=>x.classList.add('hidden'));
+ $('hud').style.display='block';
+ $('controls').style.display='block';
+ $('menu').classList.add('hidden');
+ $('pauseScreen').classList.add('hidden');
+ $('result').classList.add('hidden');
+ initWorld();
+ running=true;paused=false;
+ hp=100;bullets=30;blue=0;red=0;time=480;
+ updateHUD();
+ clock.start();
+ animate();
+}
+
+function $(id){return document.getElementById(id)}
+
+function initWorld(){
+ if(renderer){renderer.dispose();$('hud').style.display='none'}
+ scene=new THREE.Scene();
+ scene.background=new THREE.Color(0x8799a8);
+ scene.fog=new THREE.Fog(0x8799a8,25,100);
+ camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,200);
+ renderer=new THREE.WebGLRenderer({antialias:true});
+ renderer.setSize(innerWidth,innerHeight);
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+ document.body.appendChild(renderer.domElement);
+ scene.add(new THREE.HemisphereLight(0xffffff,0x354050,2));
+ let light=new THREE.DirectionalLight(0xffffff,2);
+ light.position.set(10,20,10);scene.add(light);
+ let ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:0x4b5555}));
+ ground.rotation.x=-Math.PI/2;scene.add(ground);
+ for(let i=0;i<30;i++){
+  let x=(Math.random()-.5)*75,z=(Math.random()-.5)*75;
+  let box=new THREE.Mesh(new THREE.BoxGeometry(3,2+Math.random()*3,3),new THREE.MeshStandardMaterial({color:0x68747a}));
+  box.position.set(x,box.geometry.parameters.height/2,z);scene.add(box);
+ }
+ player=new THREE.Group();
+ let body=new THREE.Mesh(new THREE.BoxGeometry(.8,1.5,.5),new THREE.MeshStandardMaterial({color:0x277dce}));
+ body.position.y=.9;player.add(body);
+ player.position.set(0,0,15);scene.add(player);
+ camera.position.set(0,1.6,0);player.add(camera);
+ bots=[];
+ for(let i=0;i<6;i++)createBot(i);
+}
+
+function createBot(i){
+ let team=i<3?'blue':'red';
+ let bot=new THREE.Group();
+ let mat=new THREE.MeshStandardMaterial({color:team==='blue'?0x277dce:0xd73535});
+ let body=new THREE.Mesh(new THREE.BoxGeometry(.8,1.5,.5),mat);
+ body.position.y=.9;bot.add(body);
+ bot.position.set((Math.random()-.5)*35,0,(Math.random()-.5)*35);
+ scene.add(bot);
+ bots.push({obj:bot,team,hp:100,cool:Math.random()*2});
+}
+
+function animate(){
+ if(!running||paused)return;
+ requestAnimationFrame(animate);
+ let dt=Math.min(clock.getDelta(),.05);
+ updatePlayer(dt);
+ updateBots(dt);
+ renderer.render(scene,camera);
+}
+
+function updatePlayer(dt){
+ let speed=8;
+ let forward=new THREE.Vector3(Math.sin(yaw),0,-Math.cos(yaw));
+ let right=new THREE.Vector3(Math.cos(yaw),0,Math.sin(yaw));
+ player.position.addScaledVector(forward,-moveY*speed*dt);
+ player.position.addScaledVector(right,moveX*speed*dt);
+ player.rotation.y=yaw;
+ camera.rotation.order='YXZ';
+ camera.rotation.y=0;
+ camera.rotation.x=pitch;
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-45,45);
+ player.position.z=THREE.MathUtils.clamp(player.position.z,-45,45);
+}
+
+function updateBots(dt){
+ bots.forEach(b=>{
+  if(b.hp<=0)return;
+  let dir=new THREE.Vector3().subVectors(player.position,b.obj.position);
+  let distance=dir.length();
+  if(distance>5){
+   dir.normalize();b.obj.position.addScaledVector(dir,dt*(mode==='training'?0:2));
+   b.obj.lookAt(player.position);
+  }
+  b.cool-=dt;
+  if(distance<22&&b.cool<=0&&mode!=='training'){
+   b.cool=2+Math.random()*2;
+   hp=Math.max(0,hp-5);
+   updateHUD();
+   if(hp<=0)endGame(false);
+  }
+ });
+}
+
+function shoot(){
+ if(!running||paused||bullets<=0)return;
+ bullets--;
+ let target=null,best=100;
+ bots.forEach(b=>{
+  if(b.hp<=0)return;
+  let p=b.obj.position.clone().add(new THREE.Vector3(0,1,0)).project(camera);
+  let d=Math.hypot(p.x,p.y);
+  if(p.z>0&&d<.12&&d<best){best=d;target=b}
+ });
+ if(target){
+  target.hp-=50;
+  if(target.hp<=0){
+   target.obj.visible=false;
+   if(target.team==='red')blue++;else red++;
+   if(blue>=50||red>=50)endGame(blue>red);
+  }
+ }
+ updateHUD();
+}
+function reload(){
+ if(reloading||bullets===30)return;
+ reloading=true;
+ setTimeout(()=>{bullets=30;reloading=false;updateHUD()},1300);
+}
+function updateHUD(){
+ $('hp').textContent=hp;
+ $('bullets').textContent=bullets;
+ $('score').innerHTML=`MAVİ ${blue} - ${red} KIRMIZI | <span id="timer">${Math.floor(time/60)}:${String(time%60).padStart(2,'0')}</span>`;
+}
+
+function pauseGame(){
+ if(!running)return;
+ paused=true;$('pauseScreen').classList.remove('hidden');
+}
+function resumeGame(){
+ paused=false;$('pauseScreen').classList.add('hidden');
+ clock.start();animate();
+}
+function backMenu(){
+ running=false;
+ $('hud').style.display='none';$('controls').style.display='none';
+ $('menu').classList.remove('hidden');
+ $('pauseScreen').classList.add('hidden');
+ $('result').classList.add('hidden');
+}
+function endGame(win){
+ running=false;
+ $('hud').style.display='none';$('controls').style.display='none';
+ $('result').classList.remove('hidden');
+ $('resultTitle').textContent=win?'ZAFER':'MAĞLUBİYET';
+ $('resultText').textContent=`Mavi ${blue} - Kırmızı ${red}`;
+}
+function training(){startGame('training')}
+
+document.addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);
+document.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+
+function inputUpdate(){
+ moveX=(keys.d?1:0)-(keys.a?1:0);
+ moveY=(keys.w?1:0)-(keys.s?1:0);
+}
+setInterval(inputUpdate,30);
+
+$('fire').addEventListener('touchstart',e=>{e.preventDefault();shoot()});
+$('fire').addEventListener('click',shoot);
+$('reload').addEventListener('click',reload);
+$('reload').addEventListener('touchstart',e=>{e.preventDefault();reload()});
+$('jump').addEventListener('click',()=>{if(player)player.position.y+=.3});
+$('stick').addEventListener('touchmove',e=>{
+ let r=$('stick').getBoundingClientRect(),t=e.touches[0];
+ let x=t.clientX-r.left-r.width/2,y=t.clientY-r.top-r.height/2;
+ moveX=THREE.MathUtils.clamp(x/45,-1,1);
+ moveY=THREE.MathUtils.clamp(y/45,-1,1);
+ $('knob').style.transform=`translate(${moveX*35}px,${moveY*35}px)`;
+});
+$('stick').addEventListener('touchend',()=>{moveX=moveY=0;$('knob').style.transform=''});
+$('look').addEventListener('touchmove',e=>{
+ let t=e.touches[0];
+ if(lookX){yaw-=(t.clientX-lookX)*.005;pitch=THREE.MathUtils.clamp(pitch+(t.clientY-lookY)*.005,-1.2,1.2)}
+ lookX=t.clientX;lookY=t.clientY;
+});
+$('look').addEventListener('touchend',()=>lookX=lookY=0);
+$('look').addEventListener('mousedown',e=>{lookX=e.clientX;lookY=e.clientY});
+$('look').addEventListener('mousemove',e=>{
+ if(e.buttons){yaw-=(e.clientX-lookX)*.005;pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lookY)*.005,-1.2,1.2)}
+ lookX=e.clientX;lookY=e.clientY;
+});
+addEventListener('resize',()=>{
+ if(camera&&renderer){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}
+});
+setInterval(()=>{
+ if(running&&!paused){
+  time=Math.max(0,time-1);updateHUD();
+  if(time===0)endGame(blue>red);
+ }
+},1000);
+</script>
+</body>
+</html>
